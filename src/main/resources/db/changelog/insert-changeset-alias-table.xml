@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="insert_into_alias" author="admin">
+        <insert tableName="alias">
+            <column name="base_link">https://habr.com/ru/articles/682362/</column>
+            <column name="short_link">https://habr.com/ru/</column>
+            <column name="create_time">2024-04-22</column>
+            <column name="ttl">0</column>
+        </insert>
+        <insert tableName="alias">
+            <column name="base_link">https://habr.com/ru/articles/265061/</column>
+            <column name="short_link">https://habr.com/ru/articles</column>
+            <column name="create_time">2024-04-22</column>
+            <column name="ttl">0</column>
+        </insert>
+        <insert tableName="alias">
+            <column name="base_link">https://career.habr.com/</column>
+            <column name="short_link">https://habr.com/ru/articles/265061/</column>
+            <column name="create_time">2024-04-22</column>
+            <column name="ttl">0</column>
+        </insert>
+        <insert tableName="alias">
+            <column name="base_link">https://ru.wikipedia.org/wiki/%D0%A5%D0%B0%D0%B1%D1%80</column>
+            <column name="short_link">https://habr.com/</column>
+            <column name="create_time">2024-04-22</column>
+            <column name="ttl">0</column>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>
