@@ -1,6 +1,7 @@
 package com.lessons.linkalias.service;
 
 import com.lessons.linkalias.dto.LinkRequest;
+import com.lessons.linkalias.exceptions.TTLException;
 import com.lessons.linkalias.model.LinkAlias;
 import com.lessons.linkalias.repository.LinkAliasRepository;
 import com.lessons.linkalias.util.ShortLinkCreater;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.time.Period;
 import java.util.Date;
 
 @Service
@@ -25,7 +27,7 @@ public class LinkAliasService {
             var shortLink = shortLinkCreater.createShortLink(linkRequest.getUrl());
             linkAliasRepository.save(LinkAlias.builder()
                     .baseLink(linkRequest.getUrl())
-                    .ttl(1L)
+                    .ttl(linkRequest.getTTL())
                     .shortLink(shortLink)
                     .createTime(Instant.now())
                     .build()
@@ -35,6 +37,13 @@ public class LinkAliasService {
     }
 
     public String getRedirect(String link) {
-        return linkAliasRepository.findByShortLink(link).map(LinkAlias::getBaseLink).orElseThrow(IllegalArgumentException::new);
+        var aliasLink = linkAliasRepository.findByShortLink(link).orElseThrow(IllegalArgumentException::new);
+        var currentTime = Instant.now();
+        if(aliasLink.getCreateTime().plusMillis(aliasLink.getTtl()).compareTo(currentTime) < 0 && aliasLink.getTtl() != 0){
+            linkAliasRepository.delete(aliasLink);
+            linkAliasRepository.flush();
+            throw  new TTLException(aliasLink.getBaseLink());
+        }
+        return aliasLink.getBaseLink();
     }
 }

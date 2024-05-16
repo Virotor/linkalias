@@ -13,12 +13,7 @@ public class ShortLinkCreaterImp implements  ShortLinkCreater{
     @Override
     public String createShortLink(String baseLink) {
         long seed = getSeed();
-        StringBuilder stringBuilder = new StringBuilder(baseURL);
-        while(seed > 0){
-            stringBuilder.append('A' + seed/26);
-            seed /=26;
-        }
-        return  stringBuilder.toString();
+        return baseURL+Long.toHexString(seed);
     }
 
     private synchronized Long getSeed(){

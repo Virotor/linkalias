@@ -10,6 +10,7 @@ public class AppConfiguration {
 
     @Bean
     public ShortLinkCreater getShortLinkCreater(){
+
         return  new ShortLinkCreaterImp();
     }
 
