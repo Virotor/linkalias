@@ -13,6 +13,7 @@ public interface LinkAliasRepository extends JpaRepository<LinkAlias, Long> {
 
     Boolean existsByBaseLink(String baseLink);
 
+    Boolean existsByShortLink(String baseLink);
     Optional<LinkAlias> findByBaseLink(String baseLink);
 
     Optional<LinkAlias> findByShortLink(String shortLink);

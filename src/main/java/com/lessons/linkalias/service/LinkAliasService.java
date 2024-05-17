@@ -47,13 +47,17 @@ public class LinkAliasService {
     }
 
     public String createPrettyLink(PrettyLinkRequest linkRequest) {
-        var baseLink = linkAliasRepository.findByBaseLink(linkRequest.getUrl()).orElse(LinkAlias.builder()
-                .baseLink(linkRequest.getUrl())
-                .shortLink("/redirect/"+linkRequest.getPrettyUrl())
-                .build());
-        if(linkAliasRepository.existsByBaseLink(linkRequest.getPrettyUrl()) && !baseLink.getBaseLink().equals(linkRequest.getUrl())){
-            throw  new LinkIsResolvedException(linkRequest.getPrettyUrl());
-        }
+        var baseLink = linkAliasRepository.findByBaseLink(linkRequest.getUrl()).orElseGet(
+                ()->{
+                    String uri = linkRequest.getPrettyUrl();
+                    if(linkAliasRepository.existsByShortLink(uri)){
+                         throw  new LinkIsResolvedException(linkRequest.getPrettyUrl());
+                    }
+                    return  LinkAlias.builder()
+                            .baseLink(linkRequest.getUrl())
+                            .shortLink(uri)
+                            .build();
+        });
         if(!linkRequest.getTTL().equals(baseLink.getTtl())){
             baseLink.setTtl(linkRequest.getTTL());
         }

@@ -70,28 +70,18 @@ public class LinkAliasTest {
     @Test
     public  void testLinkAliasCreatePretty(){
         when(shortLinkCreater.getBase()).thenReturn("prettyLink");
-        LinkAlias linkAlias = LinkAlias.builder()
-                .baseLink("testBase")
-                .shortLink("/redirect/prettyUrl")
-                .createTime(Instant.EPOCH)
-                .ttl(0L)
-                .build();
         PrettyLinkRequest linkRequest = new PrettyLinkRequest("testBase", 100L, "/prettyUrl");
-        when(linkAliasRepository.findByBaseLink("testBase")).thenReturn(Optional.of(linkAlias));
-        assertThat(linkAliasService.createPrettyLink(linkRequest)).isEqualTo("prettyLink/redirect/prettyUrl");
+        when(linkAliasRepository.findByBaseLink("testBase")).thenReturn(Optional.empty());
+        when(linkAliasRepository.existsByShortLink("/prettyUrl")).thenReturn(false);
+        assertThat(linkAliasService.createPrettyLink(linkRequest)).isEqualTo("prettyLink/prettyUrl");
     }
 
     @Test
     public  void testLinkAliasCreatePrettyLinkResolveException(){
-        LinkAlias linkAlias = LinkAlias.builder()
-                .baseLink("testBase")
-                .shortLink("/redirect/prettyUrl")
-                .createTime(Instant.EPOCH)
-                .ttl(0L)
-                .build();
+
         PrettyLinkRequest linkRequest = new PrettyLinkRequest("testBaseNew", 100L, "/prettyUrl");
-        when(linkAliasRepository.existsByBaseLink(linkRequest.getPrettyUrl())).thenReturn(true);
-        when(linkAliasRepository.findByBaseLink("testBaseNew")).thenReturn(Optional.of(linkAlias));
+        when(linkAliasRepository.existsByShortLink(linkRequest.getPrettyUrl())).thenReturn(true);
+        when(linkAliasRepository.findByBaseLink("testBaseNew")).thenReturn(Optional.empty());
         assertThatThrownBy(()->linkAliasService.createPrettyLink(linkRequest)).isInstanceOf(LinkIsResolvedException.class);
     }
 
