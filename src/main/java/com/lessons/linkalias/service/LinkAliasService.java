@@ -51,7 +51,7 @@ public class LinkAliasService {
                 .baseLink(linkRequest.getUrl())
                 .shortLink("/redirect/"+linkRequest.getPrettyUrl())
                 .build());
-        if(linkAliasRepository.existsByBaseLink(linkRequest.getPrettyUrl()) && baseLink.getBaseLink().equals(linkRequest.getUrl())){
+        if(linkAliasRepository.existsByBaseLink(linkRequest.getPrettyUrl()) && !baseLink.getBaseLink().equals(linkRequest.getUrl())){
             throw  new LinkIsResolvedException(linkRequest.getPrettyUrl());
         }
         if(!linkRequest.getTTL().equals(baseLink.getTtl())){
