@@ -13,8 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.time.Period;
-import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
@@ -25,16 +23,16 @@ public class LinkAliasService {
 
     @Transactional
     public String createShortLink(LinkRequest linkRequest){
-        var getBase = linkAliasRepository.findByBaseLink(linkRequest.getUrl()).orElse(LinkAlias.builder()
+        var baseLink = linkAliasRepository.findByBaseLink(linkRequest.getUrl()).orElse(LinkAlias.builder()
                 .baseLink(linkRequest.getUrl())
                 .shortLink(shortLinkCreater.createShortLink(linkRequest.getUrl()))
                 .build());
-        if(!linkRequest.getTTL().equals(getBase.getTtl())){
-            getBase.setTtl(linkRequest.getTTL());
+        if(!linkRequest.getTTL().equals(baseLink.getTtl())){
+            baseLink.setTtl(linkRequest.getTTL());
         }
-        getBase.setCreateTime(Instant.now());
-        linkAliasRepository.save(getBase);
-        return getBase.getShortLink();
+        baseLink.setCreateTime(Instant.now());
+        linkAliasRepository.save(baseLink);
+        return shortLinkCreater.getBase()+baseLink.getShortLink();
     }
 
     public String getRedirect(String link) {
@@ -49,18 +47,18 @@ public class LinkAliasService {
     }
 
     public String createPrettyLink(PrettyLinkRequest linkRequest) {
-        var getBase = linkAliasRepository.findByBaseLink(linkRequest.getUrl()).orElse(LinkAlias.builder()
+        var baseLink = linkAliasRepository.findByBaseLink(linkRequest.getUrl()).orElse(LinkAlias.builder()
                 .baseLink(linkRequest.getUrl())
-                .shortLink(linkRequest.getPrettyUrl())
+                .shortLink("/redirect/"+linkRequest.getPrettyUrl())
                 .build());
-        if(linkAliasRepository.existsByBaseLink(linkRequest.getPrettyUrl()) && getBase.getBaseLink().equals(linkRequest.getUrl())){
+        if(linkAliasRepository.existsByBaseLink(linkRequest.getPrettyUrl()) && baseLink.getBaseLink().equals(linkRequest.getUrl())){
             throw  new LinkIsResolvedException(linkRequest.getPrettyUrl());
         }
-        if(!linkRequest.getTTL().equals(getBase.getTtl())){
-            getBase.setTtl(linkRequest.getTTL());
+        if(!linkRequest.getTTL().equals(baseLink.getTtl())){
+            baseLink.setTtl(linkRequest.getTTL());
         }
-        getBase.setCreateTime(Instant.now());
-        linkAliasRepository.save(getBase);
-        return getBase.getShortLink();
+        baseLink.setCreateTime(Instant.now());
+        linkAliasRepository.save(baseLink);
+        return shortLinkCreater.getBase()+ baseLink.getShortLink();
     }
 }

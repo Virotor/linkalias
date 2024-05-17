@@ -10,6 +10,13 @@ public class ShortLinkCreaterImp implements  ShortLinkCreater{
     @Value("${short.link}")
     private String baseURL;
 
+    @Value("${short.address}")
+    private  String address;
+
+    public String getBase(){
+        return  address;
+    }
+
     @Override
     public String createShortLink(String baseLink) {
         long seed = getSeed();
