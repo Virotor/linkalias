@@ -2,6 +2,7 @@ package com.lessons.linkalias.controller;
 
 
 import com.lessons.linkalias.dto.LinkRequest;
+import com.lessons.linkalias.dto.PrettyLinkRequest;
 import com.lessons.linkalias.service.LinkAliasService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,5 +21,10 @@ public class LinkAliasController {
         return ResponseEntity.ok(shortLink);
     }
 
+    @PostMapping("/create/pretty")
+    public ResponseEntity<?> createPrettyLink(@RequestBody PrettyLinkRequest linkRequest){
+        var shortLink = linkAliasService.createPrettyLink(linkRequest);
+        return ResponseEntity.ok(shortLink);
+    }
 
 }

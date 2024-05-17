@@ -1,19 +1,18 @@
 package com.lessons.linkalias.exceptions;
 
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
-public class LinkNotFoundException extends  RuntimeException{
+public class LinkNotFoundException extends  AppErrorImp implements  AppError{
 
-
-    private final String baseLink;
 
     public LinkNotFoundException( String baseLink) {
-
-        this.baseLink = baseLink;
+        super(baseLink, HttpStatus.NOT_FOUND);
     }
 
     @Override
     public String toString() {
         return  "Not found base link for short link " + baseLink;
     }
+
 }

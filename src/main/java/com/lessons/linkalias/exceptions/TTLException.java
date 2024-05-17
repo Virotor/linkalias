@@ -1,16 +1,17 @@
 package com.lessons.linkalias.exceptions;
 
-public class TTLException extends RuntimeException {
+import org.springframework.http.HttpStatus;
 
-    private final String baseLink;
+public class TTLException extends AppErrorImp implements  AppError {
+
 
     public TTLException( String baseLink) {
-
-        this.baseLink = baseLink;
+        super(baseLink, HttpStatus.REQUEST_TIMEOUT);
     }
 
     @Override
     public String toString() {
-        return  "Ttl for link " + baseLink;
+        return  "Timeout for link " + baseLink;
     }
+
 }

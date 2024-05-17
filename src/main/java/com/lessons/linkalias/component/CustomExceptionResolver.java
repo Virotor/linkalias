@@ -1,5 +1,6 @@
 package com.lessons.linkalias.component;
 
+import com.lessons.linkalias.exceptions.AppErrorImp;
 import com.lessons.linkalias.exceptions.LinkNotFoundException;
 import com.lessons.linkalias.exceptions.TTLException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,14 +17,9 @@ public class CustomExceptionResolver extends AbstractHandlerExceptionResolver {
     @Override
     protected ModelAndView doResolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception e) {
         final ModelAndView modelAndView = new ModelAndView(new MappingJackson2JsonView());
-        if (e instanceof LinkNotFoundException) {
-            modelAndView.setStatus(HttpStatus.NOT_FOUND);
-            modelAndView.addObject("message", e.toString());
-            return modelAndView;
-        }
-        else if (e instanceof TTLException){
-            modelAndView.setStatus(HttpStatus.BAD_REQUEST);
-            modelAndView.addObject("message", e.toString());
+        if (e instanceof AppErrorImp) {
+            modelAndView.setStatus(((AppErrorImp) e).getHTTPStatus());
+            modelAndView.addObject("message", ((AppErrorImp) e).getMessageError());
             return modelAndView;
         }
         modelAndView.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
